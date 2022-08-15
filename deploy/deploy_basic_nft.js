@@ -2,12 +2,19 @@ const { network, getNamedAccounts } = require('hardhat');
 const { developmentChains } = require('../helper-hardhat-config');
 const { verify } = require('../utils/verify');
 
-module.exports = async ({ getNamedAccount, deployments }) => {
+module.exports = async ({ deployments }) => {
 	const { deploy, log } = deployments;
 	const { deployer } = await getNamedAccounts();
 
 	const args = [];
 	const basicNFT = await deploy('BasicNft', {
+		from: deployer,
+		args: args,
+		log: true,
+		waitConfirmations: network.config.blockConfirmations || 1,
+	});
+
+	const basicNftTwo = await deploy('BasicNftTwo', {
 		from: deployer,
 		args: args,
 		log: true,
@@ -20,6 +27,7 @@ module.exports = async ({ getNamedAccount, deployments }) => {
 	) {
 		log('Verifying...');
 		await verify(basicNFT.address, args);
+		await verify(basicNftTwo.address, args);
 	}
 };
 
